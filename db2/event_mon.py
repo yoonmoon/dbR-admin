@@ -2,16 +2,41 @@ import ibm_db
 import string
 import sys
 
+evMons = {'ACTIVITIES'}
+
+def getEventMonitors():
+	return evMons
+
+def enableDefaultClass( conn ):
+	if conn:		
+		#sql = "create table test1( col1 int, col2 varchar(100) )"
+		sql = "alter service class sysdefaultsubclass under sysdefaultuserclass collect activity data on all database partitions with details and values"
+		try:
+			stmt = ibm_db.exec_immediate(conn, sql)	
+		except:
+			print "enableDefaultClass() couldn't be completed:" , ibm_db.stmt_errormsg()
+		else:
+			print "enableDefaultClass() complete.", ibm_db.stmt_errormsg()
+
+def listEventMon( conn ):
+	result = ibm_db.exec_immediate(conn, "select * from SYSCAT.EVENTMONITORS with ur")
+	row = ibm_db.fetch_tuple(result)
+	while ( row ):
+		#print("%5s  %-10s %5s %-7s %5s %15s %10s " % (row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
+		row_str = ""
+		for element in row:
+			row_str += str(element) +","
+		print row
+		print row_str
+		row = ibm_db.fetch_tuple(result)
+
 
 def createEventMon( conn, evmonName, type, filter ):
 	if conn:
 		server = ibm_db.server_info( conn )
-		print server
-		result = ibm_db.columns(conn,None,None,"EMPLOYEE")
-		row = ibm_db.fetch_both(result)
-		print row		
+		print server		
 		#sql = "create table test1( col1 int, col2 varchar(100) )"
-		sql = "CREATE EVENT MONITOR "+evmonName+" FOR CONNECTIONS write to table"
+		sql = "create event monitor EM_"++" for "++" write to table manualstart"
 		try:
 			stmt = ibm_db.exec_immediate(conn, sql)	
 		except:
@@ -22,10 +47,7 @@ def createEventMon( conn, evmonName, type, filter ):
 def dropEventMon( conn, evmonName, type, filter ):
 	if conn:
 		server = ibm_db.server_info( conn )
-		print server
-		result = ibm_db.columns(conn,None,None,"EMPLOYEE")
-		row = ibm_db.fetch_both(result)
-		print row		
+		print server	
 		#sql = "create table test1( col1 int, col2 varchar(100) )"
 		sql = "DROP EVENT MONITOR "+evmonName+" FOR CONNECTIONS"
 		try:
@@ -37,10 +59,9 @@ def dropEventMon( conn, evmonName, type, filter ):
 
 def selectEventMon( conn, evmonName, type, filter ):
 	if conn:
-		stmt = ibm_db.prepare(conn, "SELECT * FROM "+evmonName)
+		stmt = ibm_db.prepare(conn, "select * from SYSCAT.EVENTMONITORS with ur")
 		if ibm_db.execute(stmt):
 			row = ibm_db.fetch_tuple(stmt)
-
 			while ( row ):
 				print row
 				for i in row:
@@ -48,8 +69,4 @@ def selectEventMon( conn, evmonName, type, filter ):
 					row = ibm_db.fetch_tuple(stmt)
 	else:
 		print("Connection failed.")
-
-def printMsg( message ):
-	print message
-	return message
 
