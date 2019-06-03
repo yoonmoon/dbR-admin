@@ -1,6 +1,9 @@
 import ibm_db
+import db2_sql
 import string
 import sys
+
+
 
 evMons = {'ACTIVITIES'}
 
@@ -57,9 +60,11 @@ def dropEventMon( conn, evmonName, type, filter ):
 		else:
 			print "Transaction complete."
 
-def selectEventMon( conn, evmonName, type, filter ):
+def selectEventMon( conn, evmonName ):
 	if conn:
-		stmt = ibm_db.prepare(conn, "select * from SYSCAT.EVENTMONITORS with ur")
+		sql = db2_sql.setParameter("select * from SYSCAT.EVENTMONITORS where EVMONNAME like {evmonname} with ur", 'evmonname', evmonName)
+		print sql
+		stmt = ibm_db.prepare(conn, sql )
 		if ibm_db.execute(stmt):
 			row = ibm_db.fetch_tuple(stmt)
 			while ( row ):
