@@ -4,8 +4,7 @@ import pickle
 
 
 def saveSecret():
-	print('Enter Your Password:')
-	password = raw_input()
+	password = raw_input('Enter Password: ')
 	homePath = expanduser("~")
 	filePath = os.path.join(homePath, ".dbR_config")
 	print "filePath=", filePath

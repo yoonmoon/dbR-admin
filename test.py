@@ -6,26 +6,33 @@ import os
 from common import shell_ext
 from common import config
 import readline
+import db2_env
 
-config.saveSecret()
 
-print config.getSecret()
 
-os.environ['DBR_MODULE']='testing module'
-os.environ['DBR_ACTION']='testing action'
-print(os.environ['DBR_MODULE'])
-print(os.environ['DBR_ACTION'])
+#db2_env
+#config.saveSecret()
+#print config.getSecret()
 
-print('Enter Your Action:')
-DBR_ACTION = input()
+#print db2_info.getSqlByCols('cat.tables', '*')
+#print db2_info.getSqlByCols('mon.conns', '*')
 
-try:
-	action=sys.argv[4]
-except Exception as e:
-	action='listEM'
+##os.environ['DBR_MODULE']='testing module'
 
-print "...", action
-conn = ibm_db.connect(database, user, password)
+action = raw_input('Enter Your Action: ')
+
+em = db2_env.mappings
+print em
+print " +executing...", action
+conn = ibm_db.connect(os.getenv(em['database']), os.getenv(em['user']), config.getSecret() )
+
+if action == 'sql':
+	tabName = raw_input( "tabName: ")
+	columnList = raw_input( "columnList: ")
+	whereClause = str(raw_input( "whereClause: "))
+	if ( whereClause != None or whereClause != '' ): 
+		whereClause += "WHERE "+ whereClause
+	print db2_info.execSql4Str( conn, db2_info.getSqlByCols('cat.tables', columnList) )
 
 if action == 'listEM':
 	event_mon.listEventMon( conn )
