@@ -16,8 +16,18 @@ db2sqls = {
 	"mon.conns" : "select `{columnlist}` from table( MON_GET_CONNECTION(null, -2) ) t"
 }
 
+db2look = {
+	"schema" : "db2look -d `{database}` -a -e -x -noimplschema -z `{schema}` -o `{fileName}`.sql"
+}
+
+def applyField( query, fieldName, value ):
+	return query.replace("`{"+fieldName+"}`", value)
+
+def getDb2Look( cmd ):
+	return db2look[cmd]
+
 def getSqlByCols( name, columnList ):
-	return db2sqls[name].replace("`{columnlist}`", columnList)
+	return applyField(db2sqls[name], "columnlist", columnList)
 
 
 # List of Databases

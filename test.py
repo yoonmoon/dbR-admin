@@ -34,6 +34,18 @@ if action == 'sql':
 		whereClause += "WHERE "+ whereClause
 	print db2_info.execSql4Str( conn, db2_info.getSqlByCols('cat.tables', columnList) )
 
+if action == 'look.schema':
+	dbName = os.getenv(em['database'])
+	if dbName != None:
+		schemaIn = raw_input( "Schema: ")
+		fileName = raw_input( "FileName: ")
+		cmd = db2_info.getDb2Look("schema")
+		cmd = db2_info.applyField(cmd, "database", dbName)
+		cmd = db2_info.applyField(cmd, "schema", schemaIn)
+		cmd = db2_info.applyField(cmd, "fileName", fileName)
+		print(cmd)
+		os.system(cmd)
+
 if action == 'listEM':
 	event_mon.listEventMon( conn )
 
