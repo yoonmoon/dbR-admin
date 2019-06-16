@@ -1,5 +1,6 @@
 import ibm_db
 import os
+import re
 
 
 db2cmds = {
@@ -17,14 +18,24 @@ db2sqls = {
 }
 
 db2look = {
-	"schema" : "db2look -d `{database}` -a -e -x -noimplschema -z `{schema}` -o `{fileName}`.sql"
+	"schema" : "db2look -d `{database}` -e -x -noimplschema -z `{schema}`"
 }
+
+def applyRemoveSchema( db2lookData ):
+	updatedData = re.sub( "CONNECT TO *;", "", db2lookData, )
+	return updatedData
 
 def applyField( query, fieldName, value ):
 	return query.replace("`{"+fieldName+"}`", value)
 
 def getDb2Look( cmd ):
 	return db2look[cmd]
+
+def runDb2Look( cmd ):
+	print db2look[cmd]
+	isOk = raw_input(" OK to Proceed? (y/n): ")
+	if ( isOk == "y"):
+		os.system(cmd)
 
 def getSqlByCols( name, columnList ):
 	return applyField(db2sqls[name], "columnlist", columnList)
