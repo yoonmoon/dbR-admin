@@ -21,8 +21,10 @@ db2look = {
 	"schema" : "db2look -d `{database}` -e -x -noimplschema -z `{schema}`"
 }
 
-def applyRemoveSchema( db2lookData ):
-	updatedData = re.sub( "CONNECT TO *;", "", db2lookData, )
+def applyRemoveSchema( db2lookData, schema ):
+	updatedData = re.sub(r'CONNECT TO ', '--- CONNECT TO ', db2lookData, )
+	updatedData = re.sub(r'\"'+schema+'\s+\"\.', '', updatedData, )
+	updatedData = re.sub(r'\"'+schema+'\s+\"\.', '', updatedData, )
 	return updatedData
 
 def applyField( query, fieldName, value ):

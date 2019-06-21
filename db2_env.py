@@ -6,7 +6,10 @@ import readline
 
 mappings = {
 	"database" : "dbR_database",
-	"user" : "dbR_user"
+	"user" : "dbR_user",
+	"action" : "dbR_action",
+	"schema" : "dbR_schema",
+	"action" : "dbR_action"
 }
 
 def settingInput( envName, list ):
@@ -23,6 +26,7 @@ def setDb2Conn():
 	settingInput( 'dbR_database', db2_info.getDatabaseList() )
 	settingInput( 'dbR_user', [] )
 	config.saveSecret()
+
 #settingInput( 'dbR_password', [] )
 
 
